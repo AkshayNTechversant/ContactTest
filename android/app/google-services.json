@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "165060451927",
+    "project_id": "contacttest-dab5d",
+    "storage_bucket": "contacttest-dab5d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:165060451927:android:01f95e56ad1151192ccd12",
+        "android_client_info": {
+          "package_name": "com.contacttest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "165060451927-4bd03ttt5vvp7tvfi9986mfpfpbdr3dr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJCBXy7U169RIDy-oPPhFnYwh4tpCIfMI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "165060451927-4bd03ttt5vvp7tvfi9986mfpfpbdr3dr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
