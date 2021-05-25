@@ -1,29 +1,45 @@
-import React,{useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, StyleSheet, ImageBackground, TextInput, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { RouteStackParamList } from '../navigation/RouteParamList';
 import { mainAppBackgroundColor, mainIconColor, textInputBackgroundColor } from '../constants/Colors';
-import {UserContext} from '../provider/UserContext';
+import auth from '@react-native-firebase/auth';
+import { UserContext } from '../provider/UserContext';
+import Loader from '../components/Loader';
 
-export type Props = {
+export type UserProps = {
     userName: string;
-    passWord:String;
-  };
-const LoginScreen: React.FC <Props>= ({ navigation }: RouteStackParamList<"Home">) => {
+    passWord: String;
+    navigation: undefined
+};
+const LoginScreen: React.FC<UserProps> = ({ navigation }) => {
     const value = useContext(UserContext);
-    const [userName,setUserName] = useState('');
-    const [password,setPassword] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loader, setLoader] = useState(false);
+    const signIn = () => {
+        auth()
+            .signInWithEmailAndPassword(email, password)
+            .then(() => {
+                console.log('signed in!');
+                setLoader(false);
+                navigation.navigate('Home')
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
     return (
         <View style={styles.mainContainer}>
             <View style={styles.contentContainer}>
                 <View style={styles.inputContainer}>
                     <Icon name='user' size={30} color={mainIconColor} />
                     <TextInput
-                        placeholder="Username"
+                        placeholder="E-mail"
                         style={styles.textInputContainer}
                         showSoftInputOnFocus={true}
-                        onChangeText={setUserName} />
+                        onChangeText={setEmail} />
                 </View>
                 <View style={{ paddingTop: hp('4%') }}>
                     <View style={styles.inputContainer}>
@@ -32,23 +48,25 @@ const LoginScreen: React.FC <Props>= ({ navigation }: RouteStackParamList<"Home"
                             placeholder="Password"
                             style={styles.textInputContainer}
                             showSoftInputOnFocus={true}
-                            secureTextEntry={true} 
-                            onChangeText={setPassword}/>
+                            secureTextEntry={true}
+                            onChangeText={setPassword} />
                     </View>
                 </View>
                 <View style={{ paddingTop: hp('4%') }}>
                     <TouchableOpacity
                         style={styles.buttonContainer}
-                        onPress={() => navigation.navigate('Home')}>
+                        onPress={() => signIn()}>
                         <Text style={styles.textStyle}>Login</Text>
                     </TouchableOpacity>
                     <View style={styles.registerNavigation}>
                         <Text style={styles.textStyleRegister}>Not a User ? </Text>
-                        <TouchableOpacity onPress={() =>navigation.navigate('Signup')}>
+                        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
                             <Text style={styles.textStyleRegisterSignup}>SignUp </Text>
                         </TouchableOpacity>
+
                     </View>
                 </View>
+
             </View>
         </View>
     );
@@ -58,7 +76,7 @@ const styles = StyleSheet.create({
     mainContainer: {
         height: hp('100%'),
         width: wp('100%'),
-        backgroundColor:mainAppBackgroundColor,
+        backgroundColor: mainAppBackgroundColor,
         alignItems: 'center'
     },
     contentContainer: {

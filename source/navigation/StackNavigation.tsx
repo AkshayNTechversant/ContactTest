@@ -12,8 +12,8 @@ const StackNavigator: React.FC = ({
     return (
         <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false}}/>
-        <Stack.Screen name="Home" component={TabNavigator} />
-        <Stack.Screen name="Signup" component={SignupScreen} />
+        <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false}}/>
+        <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false}}/>
       </Stack.Navigator>
     );
 }
