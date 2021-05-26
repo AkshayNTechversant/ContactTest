@@ -1,14 +1,30 @@
-import * as React from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import StackNavigator from './StackNavigation';
+import { AuthStack, Appstack } from './StackNavigation';
+import { AuthContext } from '../navigation/AuthProvider';
+import auth from '@react-native-firebase/auth';
 
-const Router: React.FC = ({
+export type AuthProps = {
+    user: string
+}
+const Router: React.FC<AuthProps> = ({ }) => {
+    const [initializing, setInitializing] = useState(true);
+    const {user,setUser} = useContext(AuthContext);
 
-}) => {
+    const onAuthStateChanged = (user) => {
+        setUser(user);
+        if (initializing) setInitializing(false);
+    }
+    useEffect(() => {
+        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+        return subscriber; // unsubscribe on unmount
+    },[]);
+    if (initializing) return null;
+
     return (
         <NavigationContainer>
-       <StackNavigator/>
-       </NavigationContainer>
+            { user ? <Appstack /> : <AuthStack/>}
+        </NavigationContainer>
     );
 }
 

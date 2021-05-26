@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, Modal, TouchableOpacity, Alert, TextInput, ToastAndroid } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ToastAndroid } from 'react-native';
 import { mainAppBackgroundColor } from '../constants/Colors';
 import firestore from '@react-native-firebase/firestore';
+import { AuthContext } from '../navigation/AuthProvider';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 const EditContacts: React.FC = ({
@@ -9,10 +10,12 @@ const EditContacts: React.FC = ({
 }) => {
     const [name, setName] = useState('')
     const [phone, setPhone] = useState('')
+    const { user, setUser } = useContext(AuthContext);
     const addUser = () => {
         firestore()
             .collection('users')
-            .add({
+            .doc(user.uid)
+            .set({
                 name: name,
                 Phone: phone,
             })
@@ -41,7 +44,7 @@ const EditContacts: React.FC = ({
                                 style={[styles.button, styles.buttonClose]}
                                 onPress={() => addUser()}
                             >
-                                <Text style={styles.textStyle}>Add User</Text>
+                                <Text style={styles.textStyle}>Add Contact</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

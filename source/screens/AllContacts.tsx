@@ -1,24 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, ScrollView, Modal, Pressable, Alert, TextInput } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Pressable, Alert, TextInput } from 'react-native';
 import { mainAppBackgroundColor } from '../constants/Colors';
 import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconD from 'react-native-vector-icons/AntDesign';
+import { AuthContext } from '../navigation/AuthProvider';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-
-const AllContacts: React.FC = ({ }) => {
+export type allContactProps = {
+    users: string
+}
+const AllContacts: React.FC<allContactProps> = ({ }) => {
     const [users, setUsers] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
+    const { user, setUser } = useContext(AuthContext);
+    const [name,setName] = useState('')
     useEffect(() => {
         subscriber();
-    });
-    const getData = async () => {
-        const userDocuments = await firestore().collection('users').doc(data().id).get();
-        console.log(userDocuments);
-    };
+    }, []);
+    // const getData = async () => {
+    //     const userDocuments = await firestore().collection('users').doc(data().id).get();
+    //     console.log(userDocuments);
+    // };
     const subscriber = () => {
         firestore()
-            .collection('users')
+            .collection("users")
+            .orderBy("name", "asc")
             .onSnapshot(docs => {
                 let Users = [];
                 docs.forEach(doc => {
@@ -28,29 +34,28 @@ const AllContacts: React.FC = ({ }) => {
                 setUsers(Users);
             })
     };
-    const editUser = () => {
+    const updateContact = () => {
         firestore()
-            .collection('users')
-            .doc()
+            .collection('Users')
+            .doc(user.id)
             .update({
-                name: name,
-                Phone: phone,
+                name:name,
             })
             .then(() => {
                 console.log('User updated!');
+                setModalVisible(!modalVisible)
             });
     }
-
     return (
         <View style={styles.mainContainer}>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View>
                     {users.map((user, index) =>
-                        <View style={styles.cardContainer} key={index} onPress={() => setModalVisible(true)}>
+                        <View style={styles.cardContainer} key={index}>
                             <Text style={styles.cardTextStyle}>{user.name}</Text>
                             <Text style={styles.cardTextStyle}>{user.Phone}</Text>
                             <View style={styles.iconContainer}>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={() => setModalVisible(true)}>
                                     <Icon name='edit' size={30} color={'green'} />
                                 </TouchableOpacity>
                                 <TouchableOpacity>
@@ -73,11 +78,12 @@ const AllContacts: React.FC = ({ }) => {
                             <View style={styles.modalView}>
                                 <TextInput
                                     placeholder="Name"
-                                    style={styles.textInputContainer} />
+                                    style={styles.textInputContainer} 
+                                    onChangeText={setName}/>
                                 <Pressable
                                     style={[styles.button, styles.buttonClose]}
                                     onPress={() => setModalVisible(!modalVisible)}>
-                                    <Text style={styles.textStyle}>Hide Modal</Text>
+                                    <Text style={styles.textStyle}>Update</Text>
                                 </Pressable>
                             </View>
                         </View>

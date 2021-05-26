@@ -1,12 +1,12 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, StyleSheet, ImageBackground, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, TextInput, TouchableOpacity, ToastAndroid } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { RouteStackParamList } from '../navigation/RouteParamList';
 import { mainAppBackgroundColor, mainIconColor, textInputBackgroundColor } from '../constants/Colors';
 import auth from '@react-native-firebase/auth';
-import { UserContext } from '../provider/UserContext';
+import { AuthContext } from '../navigation/AuthProvider';
 import Loader from '../components/Loader';
+import { LoginSuccess } from '../constants/Messages';
 
 export type UserProps = {
     userName: string;
@@ -14,7 +14,7 @@ export type UserProps = {
     navigation: undefined
 };
 const LoginScreen: React.FC<UserProps> = ({ navigation }) => {
-    const value = useContext(UserContext);
+    const { login } = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loader, setLoader] = useState(false);
@@ -22,7 +22,7 @@ const LoginScreen: React.FC<UserProps> = ({ navigation }) => {
         auth()
             .signInWithEmailAndPassword(email, password)
             .then(() => {
-                console.log('signed in!');
+                ToastAndroid.show(LoginSuccess, ToastAndroid.LONG)
                 setLoader(false);
                 navigation.navigate('Home')
             })
@@ -55,8 +55,13 @@ const LoginScreen: React.FC<UserProps> = ({ navigation }) => {
                 <View style={{ paddingTop: hp('4%') }}>
                     <TouchableOpacity
                         style={styles.buttonContainer}
-                        onPress={() => signIn()}>
+                        onPress={() => login(email, password)}>
                         <Text style={styles.textStyle}>Login</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.registerNavigation}
+                        onPress={() => navigation.navigate('Forgot Password')}>
+                    <Text style={styles.textStyleRegisterSignup}>Forgot Password </Text>
                     </TouchableOpacity>
                     <View style={styles.registerNavigation}>
                         <Text style={styles.textStyleRegister}>Not a User ? </Text>

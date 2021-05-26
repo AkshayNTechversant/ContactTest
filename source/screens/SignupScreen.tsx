@@ -4,36 +4,33 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import IconMail from 'react-native-vector-icons/MaterialIcons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { mainAppBackgroundColor, textInputBackgroundColor } from '../constants/Colors';
-import auth from '@react-native-firebase/auth';
-import { RouteStackParamList } from '../navigation/RouteParamList';
 import { AuthContext } from '../navigation/AuthProvider';
+import ImagePicker from 'react-native-image-crop-picker';
+
 
 export type SignupProps = {
     email: string,
     password: string,
+    firstName: string,
+    lastName: string,
     navigation: undefined,
 }
 const SignupScreen: React.FC<SignupProps> = ({ navigation }) => {
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    // const {register} = useContext(AuthContext);
-    const register = () => {
-        auth()
-            .createUserWithEmailAndPassword(email, password)
-            .then(() => {
-                console.log('User account created & signed in!');
-            })
-            .catch(error => {
-                if (error.code === 'auth/email-already-in-use') {
-                    console.log('That email address is already in use!');
-                }
-
-                if (error.code === 'auth/invalid-email') {
-                    console.log('That email address is invalid!');
-                }
-
-                console.error(error);
-            });
+    const { register } = useContext(AuthContext);
+    const [imagePick, setImage] = useState('')
+    const imagePicker = () => {
+        ImagePicker.openPicker({
+            width: 300,
+            height: 400,
+            cropping: true
+        }).then(image => {
+            console.log(image.path);
+            setImage(image.path)
+        });
     }
     return (
         <View style={styles.mainContainer}>
@@ -41,32 +38,33 @@ const SignupScreen: React.FC<SignupProps> = ({ navigation }) => {
                 <View style={styles.inputContainer}>
                     <Icon name='user' size={30} color="#5cd691" />
                     <TextInput
-                        placeholder="Username"
+                        placeholder="First Name"
                         style={styles.textInputContainer}
                         showSoftInputOnFocus={true}
-                        onChangeText={setEmail} />
+                        onChangeText={setFirstName} />
                 </View>
-                {/* <View style={{ paddingTop: hp('4%') }}>
+                <View style={{ paddingTop: hp('4%') }}>
+                    <View style={styles.inputContainer}>
+                        <Icon name='user' size={30} color="#5cd691" />
+                        <TextInput
+                            placeholder="Last Name"
+                            style={styles.textInputContainer}
+                            showSoftInputOnFocus={true}
+                            onChangeText={setLastName}
+                        />
+                    </View>
+                </View>
+                <View style={{ paddingTop: hp('4%') }}>
                     <View style={styles.inputContainer}>
                         <IconMail name='email' size={30} color="#5cd691" />
                         <TextInput
-                            placeholder="Email"
+                            placeholder="E-mail"
                             style={styles.textInputContainer}
-                            showSoftInputOnFocus={true} 
-                          
-                            />
+                            showSoftInputOnFocus={true}
+                            onChangeText={setEmail}
+                        />
                     </View>
-                </View> */}
-                {/* <View style={{ paddingTop: hp('4%') }}>
-                    <View style={styles.inputContainer}>
-                        <Icon name='mobile-phone' size={30} color="#5cd691" />
-                        <TextInput
-                            placeholder="Phone Number"
-                            style={styles.textInputContainer}
-                            showSoftInputOnFocus={true} 
-                            />
-                    </View>
-                </View> */}
+                </View>
                 <View style={{ paddingTop: hp('4%') }}>
                     <View style={styles.inputContainer}>
                         <Icon name='lock' size={30} color="#5cd691" />
@@ -80,8 +78,15 @@ const SignupScreen: React.FC<SignupProps> = ({ navigation }) => {
                 </View>
                 <View style={{ paddingTop: hp('4%') }}>
                     <TouchableOpacity
+                        style={styles.browseImageContainer}
+                        onPress={() => imagePicker()}>
+                        <Text style={styles.textStyle}>Upload Profile Picture</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ paddingTop: hp('4%') }}>
+                    <TouchableOpacity
                         style={styles.buttonContainer}
-                        onPress={() => register()}>
+                        onPress={() => register(email, password, firstName, lastName, imagePick)}>
                         <Text style={styles.textStyle}>Signup</Text>
                     </TouchableOpacity>
                 </View>
@@ -145,6 +150,14 @@ const styles = StyleSheet.create({
         height: hp('7%'),
         width: wp('80%'),
         backgroundColor: '#217a5a',
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    browseImageContainer: {
+        height: hp('7%'),
+        width: wp('80%'),
+        backgroundColor: '#54bf5e',
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center'
