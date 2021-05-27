@@ -5,6 +5,7 @@ import firestore from '@react-native-firebase/firestore';
 import { Avatar } from 'react-native-elements';
 import { AuthContext } from '../navigation/AuthProvider';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import {ProfileHeader} from '../components/HeaderDesigns';
 export type profileProps = {
     image: string
 }
@@ -34,6 +35,8 @@ const Profile: React.FC<profileProps> = ({ }) => {
     }
     return (
         <View style={styles.mainContainer}>
+            <ProfileHeader/>
+            <View style={styles.contentContainer}>
             <View style={styles.profileContainer}>
                 <Avatar
                     rounded
@@ -51,6 +54,7 @@ const Profile: React.FC<profileProps> = ({ }) => {
                     </TouchableOpacity>
                 </View>
             </View>
+            </View>
         </View>
     );
 }
@@ -59,8 +63,6 @@ const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
         backgroundColor: mainAppBackgroundColor,
-        justifyContent: 'center',
-        alignItems: 'center'
     },
     textStyle: {
         fontSize: hp('3%'),
@@ -71,6 +73,11 @@ const styles = StyleSheet.create({
         fontSize: hp('3%'),
         fontWeight: 'bold',
         color: '#ffff'
+    },
+    contentContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingTop:hp('20%')
     },
     profileContainer: {
         height: hp('50%'),

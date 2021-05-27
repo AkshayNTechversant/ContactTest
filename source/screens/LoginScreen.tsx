@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { View, Text, StyleSheet, ImageBackground, TextInput, TouchableOpacity, ToastAndroid } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import IconMail from 'react-native-vector-icons/MaterialIcons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { mainAppBackgroundColor, mainIconColor, textInputBackgroundColor } from '../constants/Colors';
 import auth from '@react-native-firebase/auth';
@@ -18,23 +19,11 @@ const LoginScreen: React.FC<UserProps> = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loader, setLoader] = useState(false);
-    const signIn = () => {
-        auth()
-            .signInWithEmailAndPassword(email, password)
-            .then(() => {
-                ToastAndroid.show(LoginSuccess, ToastAndroid.LONG)
-                setLoader(false);
-                navigation.navigate('Home')
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }
     return (
         <View style={styles.mainContainer}>
             <View style={styles.contentContainer}>
                 <View style={styles.inputContainer}>
-                    <Icon name='user' size={30} color={mainIconColor} />
+                    <IconMail name='email' size={30} color={mainIconColor} />
                     <TextInput
                         placeholder="E-mail"
                         style={styles.textInputContainer}
@@ -61,7 +50,7 @@ const LoginScreen: React.FC<UserProps> = ({ navigation }) => {
                     <TouchableOpacity
                         style={styles.registerNavigation}
                         onPress={() => navigation.navigate('Forgot Password')}>
-                    <Text style={styles.textStyleRegisterSignup}>Forgot Password </Text>
+                        <Text style={styles.textStyleRegisterSignup}>Forgot Password </Text>
                     </TouchableOpacity>
                     <View style={styles.registerNavigation}>
                         <Text style={styles.textStyleRegister}>Not a User ? </Text>

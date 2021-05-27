@@ -6,6 +6,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { mainAppBackgroundColor, textInputBackgroundColor } from '../constants/Colors';
 import { AuthContext } from '../navigation/AuthProvider';
 import ImagePicker from 'react-native-image-crop-picker';
+import {SignUpHeader} from '../components/HeaderDesigns';
 
 
 export type SignupProps = {
@@ -34,6 +35,7 @@ const SignupScreen: React.FC<SignupProps> = ({ navigation }) => {
     }
     return (
         <View style={styles.mainContainer}>
+            <SignUpHeader/>
             <View style={styles.contentContainer}>
                 <View style={styles.inputContainer}>
                     <Icon name='user' size={30} color="#5cd691" />

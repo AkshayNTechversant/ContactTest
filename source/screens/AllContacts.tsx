@@ -1,19 +1,21 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Pressable, Alert, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Pressable, Alert, TextInput, FlatList, ToastAndroid } from 'react-native';
 import { mainAppBackgroundColor } from '../constants/Colors';
-import firestore from '@react-native-firebase/firestore';
+import firestore, { firebase } from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconD from 'react-native-vector-icons/AntDesign';
-import { AuthContext } from '../navigation/AuthProvider';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { Update, Delete } from '../constants/Messages';
+import {HomeHeader} from '../components/HeaderDesigns';
 export type allContactProps = {
-    users: string
+    usersList: string,
+    userArray: string
 }
 const AllContacts: React.FC<allContactProps> = ({ }) => {
-    const [users, setUsers] = useState([]);
+    const [usersList, setUsers] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
-    const { user, setUser } = useContext(AuthContext);
-    const [name,setName] = useState('')
+    const [name, setName] = useState('');
+    const [contactId, setContactId] = useState('')
     useEffect(() => {
         subscriber();
     }, []);
@@ -21,50 +23,71 @@ const AllContacts: React.FC<allContactProps> = ({ }) => {
     //     const userDocuments = await firestore().collection('users').doc(data().id).get();
     //     console.log(userDocuments);
     // };
-    const subscriber = () => {
-        firestore()
-            .collection("users")
-            .orderBy("name", "asc")
-            .onSnapshot(docs => {
-                let Users = [];
-                docs.forEach(doc => {
-                    Users.push(doc.data())
-                    console.log("ID", doc.data())
-                })
-                setUsers(Users);
-            })
+    const subscriber = async () => {
+        var contactList = [];
+        var snapShot = await firebase.firestore()
+            .collection('users')
+            .orderBy('name')
+            .get()
+        snapShot.forEach((doc) => {
+            const userArray = doc.data();
+            userArray.id = doc.id;
+            contactList.push(userArray);
+            setUsers(contactList);
+        })
+        console.log("User Array", usersList)
     };
     const updateContact = () => {
         firestore()
-            .collection('Users')
-            .doc(user.id)
+            .collection('users')
+            .doc(contactId)
             .update({
-                name:name,
+                name: name,
             })
             .then(() => {
-                console.log('User updated!');
+                ToastAndroid.show(Update, ToastAndroid.LONG)
                 setModalVisible(!modalVisible)
             });
+    };
+    const deleteContact = () => {
+        firestore()
+            .collection('users')
+            .doc(contactId)
+            .delete()
+            .then(() => {
+                ToastAndroid.show(Delete, ToastAndroid.LONG)
+            });
+
+    }
+    const renderItem = (item) => {
+        return (
+            <View>
+                <View style={styles.cardContainer}>
+                    <Text style={styles.cardTextStyle}>{item.name}</Text>
+                    <Text style={styles.cardTextStyle}>{item.Phone}</Text>
+                    <View style={styles.iconContainer}>
+                        <TouchableOpacity onPress={() => [setModalVisible(true), setContactId(item.id)]}>
+                            <Icon name='edit' size={30} color={'green'} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => [deleteContact(), setContactId(item.id)]}>
+                            <IconD name='delete' size={30} color={'red'} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+            </View>
+        );
+
     }
     return (
         <View style={styles.mainContainer}>
+            <HomeHeader/>
             <ScrollView showsVerticalScrollIndicator={false}>
-                <View>
-                    {users.map((user, index) =>
-                        <View style={styles.cardContainer} key={index}>
-                            <Text style={styles.cardTextStyle}>{user.name}</Text>
-                            <Text style={styles.cardTextStyle}>{user.Phone}</Text>
-                            <View style={styles.iconContainer}>
-                                <TouchableOpacity onPress={() => setModalVisible(true)}>
-                                    <Icon name='edit' size={30} color={'green'} />
-                                </TouchableOpacity>
-                                <TouchableOpacity>
-                                    <IconD name='delete' size={30} color={'red'} />
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    )}
-                </View>
+                <FlatList
+                    data={usersList}
+                    renderItem={item => renderItem(item.item)}
+                    keyExtractor={item => item.id}
+                />
                 <View style={styles.centeredView}>
                     <Modal
                         animationType="slide"
@@ -78,11 +101,11 @@ const AllContacts: React.FC<allContactProps> = ({ }) => {
                             <View style={styles.modalView}>
                                 <TextInput
                                     placeholder="Name"
-                                    style={styles.textInputContainer} 
-                                    onChangeText={setName}/>
+                                    style={styles.textInputContainer}
+                                    onChangeText={setName} />
                                 <Pressable
                                     style={[styles.button, styles.buttonClose]}
-                                    onPress={() => setModalVisible(!modalVisible)}>
+                                    onPress={() => updateContact()}>
                                     <Text style={styles.textStyle}>Update</Text>
                                 </Pressable>
                             </View>

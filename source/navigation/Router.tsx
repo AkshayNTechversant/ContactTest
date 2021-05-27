@@ -9,7 +9,7 @@ export type AuthProps = {
 }
 const Router: React.FC<AuthProps> = ({ }) => {
     const [initializing, setInitializing] = useState(true);
-    const {user,setUser} = useContext(AuthContext);
+    const { user, setUser } = useContext(AuthContext);
 
     const onAuthStateChanged = (user) => {
         setUser(user);
@@ -18,12 +18,12 @@ const Router: React.FC<AuthProps> = ({ }) => {
     useEffect(() => {
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
         return subscriber; // unsubscribe on unmount
-    },[]);
+    }, []);
     if (initializing) return null;
 
     return (
         <NavigationContainer>
-            { user ? <Appstack /> : <AuthStack/>}
+            { user ? <Appstack /> : <AuthStack />}
         </NavigationContainer>
     );
 }
