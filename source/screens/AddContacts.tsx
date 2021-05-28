@@ -1,18 +1,42 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext,useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ToastAndroid } from 'react-native';
 import { mainAppBackgroundColor } from '../constants/Colors';
 import firestore from '@react-native-firebase/firestore';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import {AddContact} from '../components/HeaderDesigns';
+import {AuthContext} from '../navigation/AuthProvider';
 
-const EditContacts: React.FC = ({
+export type addProps={
+    user:string,
+    name: string,
+    phone:string,
+}
+const EditContacts: React.FC<addProps> = ({
 
 }) => {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
-    const addUser = () => {
+    const [collectionName,setCollectionName] =useState('');
+    const {user,setUser} = useContext(AuthContext);
+    useEffect(() => {
+        getUser();
+    }, []);
+    const getUser = () => {
         firestore()
-            .collection('users')
+            .collection('userRegistered')
+            .doc(user.uid)
+            .get()
+            .then((documentSnapshot) => {
+                if (documentSnapshot.exists) {
+                    console.log('UserData', documentSnapshot.data());
+                    setCollectionName(documentSnapshot.data().email)
+                }
+            })
+    }
+    const addUser = () => {
+        console.log("ID",user.uid);
+        firestore()
+            .collection(collectionName)
             .add({
                 name: name,
                 Phone: phone,

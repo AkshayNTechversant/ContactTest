@@ -14,6 +14,8 @@ target 'ContactTest' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+  pod 'lottie-react-native', :path => '../node_modules/lottie-react-native'
+
   target 'ContactTestTests' do
     inherit! :complete
     # Pods for testing

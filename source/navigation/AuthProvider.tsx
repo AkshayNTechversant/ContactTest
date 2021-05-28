@@ -10,6 +10,7 @@ export type logInProps = {
     password: string,
     firstName: string,
     lastName: string,
+    loader:boolean,
 }
 const AuthContext = createContext();
 
@@ -28,6 +29,7 @@ const AuthProvider: React.FC<logInProps> = ({ children, navigation }) => {
                             navigation.navigate('Home')
                         })
                         .catch(error => {
+                            ToastAndroid.show("Enter Valid credentials", ToastAndroid.LONG)
                             console.log(error)
                         });
                 },

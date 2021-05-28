@@ -4,10 +4,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import IconMail from 'react-native-vector-icons/MaterialIcons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { mainAppBackgroundColor, mainIconColor, textInputBackgroundColor } from '../constants/Colors';
-import auth from '@react-native-firebase/auth';
 import { AuthContext } from '../navigation/AuthProvider';
-import Loader from '../components/Loader';
-import { LoginSuccess } from '../constants/Messages';
+
 
 export type UserProps = {
     userName: string;
@@ -18,7 +16,6 @@ const LoginScreen: React.FC<UserProps> = ({ navigation }) => {
     const { login } = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loader, setLoader] = useState(false);
     return (
         <View style={styles.mainContainer}>
             <View style={styles.contentContainer}>
@@ -85,7 +82,7 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
     },
     textStyle: {
-        fontSize: hp('3%'),
+        fontSize:25,
         fontWeight: 'bold',
         color: '#ffff'
     },
@@ -95,7 +92,7 @@ const styles = StyleSheet.create({
         color: '#ffff'
     },
     textStyleRegisterSignup: {
-        fontSize: hp('2%'),
+        fontSize:15,
         fontWeight: 'bold',
         color: '#ffff',
         paddingLeft: wp('2%')

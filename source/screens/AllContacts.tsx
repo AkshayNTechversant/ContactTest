@@ -7,26 +7,41 @@ import IconD from 'react-native-vector-icons/AntDesign';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Update, Delete } from '../constants/Messages';
 import {HomeHeader} from '../components/HeaderDesigns';
+import Loader from '../components/Loader';
+import {AuthContext} from '../navigation/AuthProvider';
 export type allContactProps = {
     usersList: string,
-    userArray: string
+    userArray: string,
+    visible: boolean
 }
 const AllContacts: React.FC<allContactProps> = ({ }) => {
     const [usersList, setUsers] = useState([]);
+    const {user,setUser} = useContext(AuthContext);
     const [modalVisible, setModalVisible] = useState(false);
     const [name, setName] = useState('');
-    const [contactId, setContactId] = useState('')
+    const [contactId, setContactId] = useState('');
+    const [loader, setLoader] = useState(false);
+    const [collectionName,setCollectionName] =useState('');
     useEffect(() => {
-        subscriber();
+        getUser();
     }, []);
-    // const getData = async () => {
-    //     const userDocuments = await firestore().collection('users').doc(data().id).get();
-    //     console.log(userDocuments);
-    // };
+    const getUser = () => {
+        firestore()
+            .collection('userRegistered')
+            .doc(user.uid)
+            .get()
+            .then((documentSnapshot) => {
+                if (documentSnapshot.exists) {
+                    console.log('UserData', documentSnapshot.data());
+                    setCollectionName(documentSnapshot.data().email);
+                }
+                subscriber();
+            })
+    }
     const subscriber = async () => {
         var contactList = [];
         var snapShot = await firebase.firestore()
-            .collection('users')
+            .collection(collectionName)
             .orderBy('name')
             .get()
         snapShot.forEach((doc) => {
@@ -35,11 +50,12 @@ const AllContacts: React.FC<allContactProps> = ({ }) => {
             contactList.push(userArray);
             setUsers(contactList);
         })
-        console.log("User Array", usersList)
+        setLoader(false);
+        console.log("User Array",contactList);
     };
     const updateContact = () => {
         firestore()
-            .collection('users')
+            .collection(collectionName)
             .doc(contactId)
             .update({
                 name: name,
@@ -51,7 +67,7 @@ const AllContacts: React.FC<allContactProps> = ({ }) => {
     };
     const deleteContact = () => {
         firestore()
-            .collection('users')
+            .collection(collectionName)
             .doc(contactId)
             .delete()
             .then(() => {
@@ -103,15 +119,18 @@ const AllContacts: React.FC<allContactProps> = ({ }) => {
                                     placeholder="Name"
                                     style={styles.textInputContainer}
                                     onChangeText={setName} />
+                                    <View style={{ paddingTop: 20 }}>
                                 <Pressable
                                     style={[styles.button, styles.buttonClose]}
                                     onPress={() => updateContact()}>
                                     <Text style={styles.textStyle}>Update</Text>
                                 </Pressable>
+                                </View>
                             </View>
                         </View>
                     </Modal>
                 </View>
+                <Loader visible={loader} />
             </ScrollView>
         </View>
 
@@ -128,7 +147,7 @@ const styles = StyleSheet.create({
     textStyle: {
         fontWeight: 'bold',
         color: '#ffff',
-        fontSize: 30
+        fontSize: 20
     },
     cardTextStyle: {
         fontWeight: 'bold',
@@ -187,9 +206,12 @@ const styles = StyleSheet.create({
         textAlign: "center"
     },
     textInputContainer: {
-        height: hp('10%'),
+        height: hp('7%'),
         width: wp('80%'),
-        backgroundColor: 'red'
+        backgroundColor: 'lightgreen',
+        padding: 10,
+        borderRadius: 20,
+        fontSize: 15
     }
 })
 
