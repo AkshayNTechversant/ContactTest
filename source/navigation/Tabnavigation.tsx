@@ -33,6 +33,7 @@ const TabNavigator: React.FC = ({
         tabBarOptions={{
           activeTintColor: 'tomato',
           inactiveTintColor: 'gray',
+          keyboardHidesTabBar: true
         }}>
         <Tab.Screen name="Home" component={AllContacts} />
         <Tab.Screen name="Add Contact" component={AddContacts} />

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { DefaultFont } from '../constants/fontFamily';
 
 const HomeHeader: React.FC = ({navigation}) => {
     return (
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
         color:'#00a32e',
         fontSize:20,
         fontWeight:'bold',
-        fontFamily: 'monospace',
+        fontFamily: DefaultFont,
     }
 })
 

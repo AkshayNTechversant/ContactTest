@@ -29,8 +29,13 @@ const AuthProvider: React.FC<logInProps> = ({ children, navigation }) => {
                             navigation.navigate('Home')
                         })
                         .catch(error => {
-                            ToastAndroid.show("Enter Valid credentials", ToastAndroid.LONG)
-                            console.log(error)
+                            if (error.code === 'auth/wrong-password'||error.code === 'auth/invalid-email') {
+                                ToastAndroid.show("Invalid credentials", ToastAndroid.LONG)
+                              }
+                              if(error.code === 'auth/user-not-found'){
+                                ToastAndroid.show("No User found", ToastAndroid.LONG)
+                              }
+                              console.log(error)
                         });
                 },
                 register: async (email, password, firstName, lastName, imagePick) => {
@@ -58,7 +63,6 @@ const AuthProvider: React.FC<logInProps> = ({ children, navigation }) => {
                             if (error.code === 'auth/invalid-email') {
                                 ToastAndroid.show(invalidMail, ToastAndroid.LONG)
                             }
-                            console.error(error);
                         });
                 },
                 logout: async () => {

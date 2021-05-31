@@ -4,6 +4,7 @@ import { mainAppBackgroundColor } from '../constants/Colors';
 import auth from '@react-native-firebase/auth';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import {ForgotHeader} from '../components/HeaderDesigns';
+import { DefaultFont } from '../constants/fontFamily';
 
 export type forgotProps = {
     email: string,
@@ -42,7 +43,7 @@ const ForgotPassword: React.FC<forgotProps> = ({ navigation }) => {
                                 style={[styles.button, styles.buttonClose]}
                                 onPress={() => onSubmitPress()}
                             >
-                                <Text style={styles.textStyle}>Submit</Text>
+                                <Text style={styles.textStyle}>Submit </Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -94,11 +95,13 @@ const styles = StyleSheet.create({
     textStyle: {
         color: "#ffff",
         fontWeight: "bold",
-        textAlign: "center"
+        textAlign: "center",
+        fontFamily:DefaultFont
     },
     modalText: {
         marginBottom: 15,
-        textAlign: "center"
+        textAlign: "center",
+        fontFamily:DefaultFont
     },
     textInputContainer: {
         height: hp('7%'),

@@ -6,72 +6,57 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import IconD from 'react-native-vector-icons/AntDesign';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Update, Delete } from '../constants/Messages';
-import {HomeHeader} from '../components/HeaderDesigns';
+import { HomeHeader } from '../components/HeaderDesigns';
 import Loader from '../components/Loader';
-import {AuthContext} from '../navigation/AuthProvider';
+import { AuthContext } from '../navigation/AuthProvider';
+import { DefaultFont } from '../constants/fontFamily';
 export type allContactProps = {
     usersList: string,
     userArray: string,
-    visible: boolean
+    visible: boolean,
 }
-const AllContacts: React.FC<allContactProps> = ({ }) => {
-    const [usersList, setUsers] = useState([]);
-    const {user,setUser} = useContext(AuthContext);
+const AllContacts: React.FC<allContactProps> = ({ route }) => {
+    const [usersList, setUsers] = useState('');
+    const { user, setUser } = useContext(AuthContext);
     const [modalVisible, setModalVisible] = useState(false);
     const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
     const [contactId, setContactId] = useState('');
     const [loader, setLoader] = useState(false);
-    const [collectionName,setCollectionName] =useState('');
+    const [collectionName, setCollectionName] = useState('');
     useEffect(() => {
-        getUser();
+        subscriber();
+
     }, []);
-    const getUser = () => {
-        firestore()
-            .collection('userRegistered')
-            .doc(user.uid)
-            .get()
-            .then((documentSnapshot) => {
-                if (documentSnapshot.exists) {
-                    console.log('UserData', documentSnapshot.data());
-                    setCollectionName(documentSnapshot.data().email);
-                }
-                subscriber();
-            })
-    }
     const subscriber = async () => {
-        var contactList = [];
-        var snapShot = await firebase.firestore()
-            .collection(collectionName)
-            .orderBy('name')
-            .get()
-        snapShot.forEach((doc) => {
-            const userArray = doc.data();
-            userArray.id = doc.id;
-            contactList.push(userArray);
-            setUsers(contactList);
-        })
-        setLoader(false);
-        console.log("User Array",contactList);
+        await firestore()
+            .collection(user.email)
+            .onSnapshot(data =>
+                setUsers(data.docs))
+        console.log(usersList)
     };
     const updateContact = () => {
         firestore()
-            .collection(collectionName)
+            .collection(user.email)
             .doc(contactId)
-            .update({
+            .set({
                 name: name,
+                Phone: phone
             })
             .then(() => {
                 ToastAndroid.show(Update, ToastAndroid.LONG)
+                setName('');
+                setPhone('');
                 setModalVisible(!modalVisible)
             });
     };
     const deleteContact = () => {
         firestore()
-            .collection(collectionName)
+            .collection(user.email)
             .doc(contactId)
             .delete()
             .then(() => {
-                ToastAndroid.show(Delete, ToastAndroid.LONG)
+                console.log("DEELTED")
             });
 
     }
@@ -79,8 +64,8 @@ const AllContacts: React.FC<allContactProps> = ({ }) => {
         return (
             <View>
                 <View style={styles.cardContainer}>
-                    <Text style={styles.cardTextStyle}>{item.name}</Text>
-                    <Text style={styles.cardTextStyle}>{item.Phone}</Text>
+                    <Text style={styles.cardTextStyle}>{item._data.name}</Text>
+                    <Text style={styles.cardTextStyle}>{item._data.Phone}</Text>
                     <View style={styles.iconContainer}>
                         <TouchableOpacity onPress={() => [setModalVisible(true), setContactId(item.id)]}>
                             <Icon name='edit' size={30} color={'green'} />
@@ -97,41 +82,50 @@ const AllContacts: React.FC<allContactProps> = ({ }) => {
     }
     return (
         <View style={styles.mainContainer}>
-            <HomeHeader/>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                <FlatList
-                    data={usersList}
-                    renderItem={item => renderItem(item.item)}
-                    keyExtractor={item => item.id}
-                />
-                <View style={styles.centeredView}>
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={modalVisible}
-                        onRequestClose={() => {
-                            Alert.alert("Modal has been closed.");
-                            setModalVisible(!modalVisible);
-                        }}>
-                        <View style={styles.centeredView}>
-                            <View style={styles.modalView}>
+            <HomeHeader />
+            <FlatList
+                data={usersList}
+                renderItem={item => renderItem(item.item)}
+                keyExtractor={item => item.id}
+                showsVerticalScrollIndicator={false}
+            />
+            <View style={styles.centeredView}>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        Alert.alert("Modal has been closed.");
+                        setModalVisible(!modalVisible);
+                    }}>
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <TextInput
+                                placeholder="Name"
+                                style={styles.textInputContainer}
+                                value={name}
+                                onChangeText={(val) => setName(val)} />
+                            <View style={{ paddingTop: 20 }}>
                                 <TextInput
-                                    placeholder="Name"
+                                    placeholder="Phone Number"
                                     style={styles.textInputContainer}
-                                    onChangeText={setName} />
-                                    <View style={{ paddingTop: 20 }}>
+                                    value={phone}
+                                    keyboardType="numeric"
+                                    onChangeText={(val) => setPhone(val)}
+                                />
+                            </View>
+                            <View style={{ paddingTop: 20 }}>
                                 <Pressable
                                     style={[styles.button, styles.buttonClose]}
                                     onPress={() => updateContact()}>
-                                    <Text style={styles.textStyle}>Update</Text>
+                                    <Text style={styles.textStyle}>Update </Text>
                                 </Pressable>
-                                </View>
                             </View>
                         </View>
-                    </Modal>
-                </View>
-                <Loader visible={loader} />
-            </ScrollView>
+                    </View>
+                </Modal>
+            </View>
+            <Loader visible={loader} />
         </View>
 
     );
@@ -147,11 +141,13 @@ const styles = StyleSheet.create({
     textStyle: {
         fontWeight: 'bold',
         color: '#ffff',
-        fontSize: 20
+        fontSize: 20,
+        fontFamily: DefaultFont
     },
     cardTextStyle: {
         fontWeight: 'bold',
-        fontSize: 16
+        fontSize: 16,
+        fontFamily: DefaultFont
     },
     iconContainer: {
         alignItems: 'flex-end',
@@ -203,7 +199,8 @@ const styles = StyleSheet.create({
     },
     modalText: {
         marginBottom: 15,
-        textAlign: "center"
+        textAlign: "center",
+        fontFamily: DefaultFont
     },
     textInputContainer: {
         height: hp('7%'),

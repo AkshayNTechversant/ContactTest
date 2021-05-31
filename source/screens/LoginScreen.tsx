@@ -5,6 +5,7 @@ import IconMail from 'react-native-vector-icons/MaterialIcons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { mainAppBackgroundColor, mainIconColor, textInputBackgroundColor } from '../constants/Colors';
 import { AuthContext } from '../navigation/AuthProvider';
+import { DefaultFont } from '../constants/fontFamily';
 
 
 export type UserProps = {
@@ -25,7 +26,8 @@ const LoginScreen: React.FC<UserProps> = ({ navigation }) => {
                         placeholder="E-mail"
                         style={styles.textInputContainer}
                         showSoftInputOnFocus={true}
-                        onChangeText={setEmail} />
+                        onChangeText={setEmail}
+                         />
                 </View>
                 <View style={{ paddingTop: hp('4%') }}>
                     <View style={styles.inputContainer}>
@@ -42,7 +44,7 @@ const LoginScreen: React.FC<UserProps> = ({ navigation }) => {
                     <TouchableOpacity
                         style={styles.buttonContainer}
                         onPress={() => login(email, password)}>
-                        <Text style={styles.textStyle}>Login</Text>
+                        <Text style={styles.textStyle}>Login </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.registerNavigation}
@@ -84,30 +86,33 @@ const styles = StyleSheet.create({
     textStyle: {
         fontSize:25,
         fontWeight: 'bold',
-        color: '#ffff'
+        color: '#ffff',
+        fontFamily:DefaultFont
     },
     textStyleRegister: {
         fontSize: hp('1.5%'),
         fontWeight: 'bold',
-        color: '#ffff'
+        color: '#ffff',
+        fontFamily:DefaultFont
     },
     textStyleRegisterSignup: {
         fontSize:15,
         fontWeight: 'bold',
         color: '#ffff',
-        paddingLeft: wp('2%')
+        paddingLeft: wp('2%'),
+        fontFamily:'Roboto'
     },
     textInputContainer: {
         height: hp('7%'),
         width: wp('80%'),
         paddingLeft: wp('5%'),
         fontSize: hp('3%'),
+        fontFamily:DefaultFont
     },
     inputContainer: {
         height: hp('7%'),
         width: wp('90%'),
         flexDirection: 'row',
-        backgroundColor: 'red',
         borderWidth: 1,
         borderRadius: 10,
         backgroundColor: textInputBackgroundColor,

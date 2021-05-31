@@ -1,13 +1,14 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, StyleSheet, ImageBackground, TextInput, TouchableOpacity, ToastAndroid,ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, TextInput, TouchableOpacity, ToastAndroid, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconMail from 'react-native-vector-icons/MaterialIcons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { mainAppBackgroundColor, textInputBackgroundColor } from '../constants/Colors';
 import { AuthContext } from '../navigation/AuthProvider';
 import ImagePicker from 'react-native-image-crop-picker';
-import {SignUpHeader} from '../components/HeaderDesigns';
+import { SignUpHeader } from '../components/HeaderDesigns';
 import { Avatar } from 'react-native-elements';
+import { DefaultFont } from '../constants/fontFamily';
 
 
 export type SignupProps = {
@@ -36,77 +37,77 @@ const SignupScreen: React.FC<SignupProps> = ({ navigation }) => {
     }
     return (
         <View style={styles.mainContainer}>
-            <SignUpHeader/>
+            <SignUpHeader />
             <ScrollView>
-            <View style={styles.contentContainer}>
-                <View style={styles.inputContainer}>
-                    <Icon name='user' size={30} color="#5cd691" />
-                    <TextInput
-                        placeholder="First Name"
-                        style={styles.textInputContainer}
-                        showSoftInputOnFocus={true}
-                        onChangeText={setFirstName} />
-                </View>
-                <View style={{ paddingTop: hp('4%') }}>
+                <View style={styles.contentContainer}>
                     <View style={styles.inputContainer}>
                         <Icon name='user' size={30} color="#5cd691" />
                         <TextInput
-                            placeholder="Last Name"
+                            placeholder="First Name"
                             style={styles.textInputContainer}
                             showSoftInputOnFocus={true}
-                            onChangeText={setLastName}
-                        />
+                            onChangeText={setFirstName} />
                     </View>
-                </View>
-                <View style={{ paddingTop: hp('4%') }}>
-                    <View style={styles.inputContainer}>
-                        <IconMail name='email' size={30} color="#5cd691" />
-                        <TextInput
-                            placeholder="E-mail"
-                            style={styles.textInputContainer}
-                            showSoftInputOnFocus={true}
-                            onChangeText={setEmail}
-                        />
-                    </View>
-                </View>
-                <View style={{ paddingTop: hp('4%') }}>
-                    <View style={styles.inputContainer}>
-                        <Icon name='lock' size={30} color="#5cd691" />
-                        <TextInput
-                            placeholder="Password"
-                            style={styles.textInputContainer}
-                            showSoftInputOnFocus={true}
-                            onChangeText={setPassword}
-                            secureTextEntry={true} />
-                    </View>
-                </View>
-                <View style={{ paddingTop: hp('4%') }}>
-                    <TouchableOpacity
-                        style={styles.browseImageContainer}
-                        onPress={() => imagePicker()}>
-                             <Icon name='file' size={25} color="#5cd691" />
-                             <View style={styles.textInputContainer}>
-                        <Text style={styles.textStyle}>Upload Profile Picture</Text>
+                    <View style={{ paddingTop: hp('4%') }}>
+                        <View style={styles.inputContainer}>
+                            <Icon name='user' size={30} color="#5cd691" />
+                            <TextInput
+                                placeholder="Last Name"
+                                style={styles.textInputContainer}
+                                showSoftInputOnFocus={true}
+                                onChangeText={setLastName}
+                            />
                         </View>
-                    </TouchableOpacity>
+                    </View>
+                    <View style={{ paddingTop: hp('4%') }}>
+                        <View style={styles.inputContainer}>
+                            <IconMail name='email' size={30} color="#5cd691" />
+                            <TextInput
+                                placeholder="E-mail"
+                                style={styles.textInputContainer}
+                                showSoftInputOnFocus={true}
+                                onChangeText={setEmail}
+                            />
+                        </View>
+                    </View>
+                    <View style={{ paddingTop: hp('4%') }}>
+                        <View style={styles.inputContainer}>
+                            <Icon name='lock' size={30} color="#5cd691" />
+                            <TextInput
+                                placeholder="Password"
+                                style={styles.textInputContainer}
+                                showSoftInputOnFocus={true}
+                                onChangeText={setPassword}
+                                secureTextEntry={true} />
+                        </View>
+                    </View>
+                    <View style={{ paddingTop: hp('4%') }}>
+                        <TouchableOpacity
+                            style={styles.browseImageContainer}
+                            onPress={() => imagePicker()}>
+                            <Icon name='file' size={25} color="#5cd691" />
+                            <View style={styles.textInputContainer}>
+                                <Text style={styles.textStyle}>Upload Profile Picture</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    {imagePick !== null ? <View style={{ paddingTop: 20 }}>
+                        <Avatar
+                            rounded
+                            size="xlarge"
+                            source={{
+                                uri: imagePick,
+                            }}
+                        />
+                    </View> : null}
+                    <View style={{ paddingTop: hp('4%') }}>
+                        <TouchableOpacity
+                            style={styles.buttonContainer}
+                            onPress={() => register(email, password, firstName, lastName, imagePick)}>
+                            <Text style={styles.textStyleRegister}>Signup </Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                {imagePick!==null ?<View style={{paddingTop:20}}>
-                    <Avatar
-                    rounded
-                    size="xlarge"
-                    source={{
-                        uri: imagePick,
-                    }}
-                />
-                </View>:null}
-                <View style={{ paddingTop: hp('4%') }}>
-                    <TouchableOpacity
-                        style={styles.buttonContainer}
-                        onPress={() => register(email, password, firstName, lastName, imagePick)}>
-                        <Text style={styles.textStyleRegister}>Signup</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
             </ScrollView>
         </View>
     );
@@ -134,24 +135,28 @@ const styles = StyleSheet.create({
         fontSize: hp('2.5%'),
         fontWeight: 'bold',
         color: 'grey',
-        paddingTop:15,
+        paddingTop: 15,
+        fontFamily:DefaultFont
     },
     textStyleRegister: {
         fontSize: hp('3%'),
         fontWeight: 'bold',
-        color: '#ffff'
+        color: '#ffff',
+        fontFamily:DefaultFont
     },
     textStyleRegisterSignup: {
         fontSize: hp('2%'),
         fontWeight: 'bold',
         color: '#ffff',
-        paddingLeft: wp('2%')
+        paddingLeft: wp('2%'),
+        fontFamily:DefaultFont
     },
     textInputContainer: {
         height: hp('7%'),
         width: wp('80%'),
         paddingLeft: wp('5%'),
         fontSize: hp('3%'),
+        fontFamily:DefaultFont
     },
     inputContainer: {
         height: hp('7%'),

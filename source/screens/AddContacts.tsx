@@ -1,23 +1,23 @@
-import React, { useState, useContext,useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ToastAndroid } from 'react-native';
 import { mainAppBackgroundColor } from '../constants/Colors';
 import firestore from '@react-native-firebase/firestore';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import {AddContact} from '../components/HeaderDesigns';
-import {AuthContext} from '../navigation/AuthProvider';
+import { AddContact } from '../components/HeaderDesigns';
+import { AuthContext } from '../navigation/AuthProvider';
+import {DefaultFont} from '../constants/fontFamily';
 
-export type addProps={
-    user:string,
+export type addProps = {
+    user: string,
     name: string,
-    phone:string,
+    phone: string,
 }
 const EditContacts: React.FC<addProps> = ({
 
 }) => {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
-    const [collectionName,setCollectionName] =useState('');
-    const {user,setUser} = useContext(AuthContext);
+    const { user, setUser } = useContext(AuthContext);
     useEffect(() => {
         getUser();
     }, []);
@@ -34,40 +34,45 @@ const EditContacts: React.FC<addProps> = ({
             })
     }
     const addUser = () => {
-        console.log("ID",user.uid);
+        console.log("ID", user.email);
         firestore()
-            .collection(collectionName)
+            .collection(user.email)
             .add({
                 name: name,
                 Phone: phone,
             })
             .then(() => {
                 ToastAndroid.show("User Added successfully", ToastAndroid.LONG)
+                setName('');
+                setPhone('');
                 console.log('User added!');
             });
     }
     return (
         <View style={styles.mainContainer}>
-            <AddContact/>
+            <AddContact />
             <View style={styles.centeredView}>
                 <View style={styles.centeredView}>
                     <View style={styles.mainView}>
                         <TextInput
                             placeholder="Name"
                             style={styles.textInputContainer}
-                            onChangeText={setName} />
+                            value={name.toString()}
+                            onChangeText={(val)=>setName(val)} />
                         <View style={{ paddingTop: 20 }}>
                             <TextInput
                                 placeholder="Phone Number"
                                 style={styles.textInputContainer}
-                                onChangeText={setPhone} />
+                                value={phone.toString()}
+                                keyboardType="numeric"
+                                onChangeText={(val)=>setPhone(val)} />
                         </View>
                         <View style={{ paddingTop: 20 }}>
                             <TouchableOpacity
                                 style={[styles.button, styles.buttonClose]}
                                 onPress={() => addUser()}
                             >
-                                <Text style={styles.textStyle}>Add Contact</Text>
+                                <Text numberOfLines={2} style={styles.textStyle}>Add Contact </Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -119,11 +124,13 @@ const styles = StyleSheet.create({
     textStyle: {
         color: "#ffff",
         fontWeight: "bold",
-        textAlign: "center"
+        textAlign: "center",
+        fontFamily: DefaultFont
     },
     modalText: {
         marginBottom: 15,
-        textAlign: "center"
+        textAlign: "center",
+        fontFamily: DefaultFont
     },
     textInputContainer: {
         height: hp('7%'),

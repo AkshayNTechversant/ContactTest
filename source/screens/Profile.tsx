@@ -5,16 +5,19 @@ import firestore from '@react-native-firebase/firestore';
 import { Avatar } from 'react-native-elements';
 import { AuthContext } from '../navigation/AuthProvider';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import {ProfileHeader} from '../components/HeaderDesigns';
+import { ProfileHeader } from '../components/HeaderDesigns';
+import { DefaultFont } from '../constants/fontFamily';
 export type profileProps = {
-    image: string
+    image: string,
+    firstName: string,
+    lastName: string
 }
 const Profile: React.FC<profileProps> = ({ }) => {
     const { logout, user, setUser } = useContext(AuthContext);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
 
-    const [imagePick, setImage] = useState('https://www.pngfind.com/pngs/m/470-4703547_icon-user-icon-hd-png-download.png')
+    const [imagePick, setImage] = useState('https://image.flaticon.com/icons/png/512/1177/1177568.png')
     useEffect(() => {
         getUser();
     }, []);
@@ -29,31 +32,30 @@ const Profile: React.FC<profileProps> = ({ }) => {
                     setFirstName(documentSnapshot.data().firstName);
                     setLastName(documentSnapshot.data().lastName);
                     setImage(documentSnapshot.data().userImage);
-
                 }
             })
     }
     return (
         <View style={styles.mainContainer}>
-            <ProfileHeader/>
+            <ProfileHeader />
             <View style={styles.contentContainer}>
-            <View style={styles.profileContainer}>
-                <Avatar
-                    rounded
-                    size="xlarge"
-                    source={{
-                        uri: imagePick,
-                    }}
-                />
-                <Text style={styles.textStyle}>{firstName} {lastName}</Text>
-                <View style={{ paddingTop: hp('4%') }}>
-                    <TouchableOpacity
-                        style={styles.buttonContainer}
-                        onPress={() => logout()}>
-                        <Text style={styles.textStyleLog}>LogOut</Text>
-                    </TouchableOpacity>
+                <View style={styles.profileContainer}>
+                    <Avatar
+                        rounded
+                        size="xlarge"
+                        source={{
+                            uri: imagePick,
+                        }}
+                    />
+                    <Text style={styles.textStyle}>{firstName} {lastName}</Text>
+                    <View style={{ paddingTop: hp('4%') }}>
+                        <TouchableOpacity
+                            style={styles.buttonContainer}
+                            onPress={() => logout()}>
+                            <Text style={styles.textStyleLog}>LogOut </Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-            </View>
             </View>
         </View>
     );
@@ -67,17 +69,19 @@ const styles = StyleSheet.create({
     textStyle: {
         fontSize: hp('3%'),
         fontWeight: 'bold',
-        color: '#033808'
+        color: '#033808',
+        fontFamily:DefaultFont
     },
     textStyleLog: {
         fontSize: hp('3%'),
         fontWeight: 'bold',
-        color: '#ffff'
+        color: '#ffff',
+        fontFamily:DefaultFont
     },
     contentContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        paddingTop:hp('20%')
+        paddingTop: hp('20%')
     },
     profileContainer: {
         height: hp('50%'),
